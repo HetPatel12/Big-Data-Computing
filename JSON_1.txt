@@ -1,0 +1,26 @@
+import org.apache.spark.sql.SparkSession
+
+val spark = (SparkSession.builder()
+  .appName("Debugging Column Access")
+  .master("local[*]")
+  .getOrCreate()
+  )
+
+
+
+// Load JSON data
+val df = spark.read.format("json").load("/home/kaizen/data/flight-data/json/2015-summary.json")
+val df1 = spark.read.format("json").load("/home/kaizen/data/flight-data/json/2015-summary.json").schema
+
+// Check if DataFrame is loaded
+df.show()
+df.printSchema()
+
+// Print all column names
+val columns = df.columns
+println("Columns in DataFrame:")
+columns.foreach(println)
+
+// Access a specific column
+df.select("DEST_COUNTRY_NAME").show()
+

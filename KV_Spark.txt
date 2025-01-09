@@ -1,0 +1,67 @@
+val rdd = sc.parallelize(Seq((1, 2), (3, 4), (3, 6)))
+val rdd = sc.parallelize(List((1, 2), (3, 4), (3, 6)))
+
+val reducedRDD = rdd.reduceByKey(_ + _)
+reducedRDD.collect().foreach(println) 
+
+val booksFile = sc.textFile("/home/kaizen/books.csv")
+val bookTokens = booksFile.map(line => line.split(","))
+val kv =bookTokens.map(x=>(x(3),x(4).toDouble))
+val rdk =kv.reduceByKey(_+_)
+rdk.foreach(println)
+
+val mappedValuesRDD = rdd.mapValues(_ * 2)
+mappedValuesRDD.collect().foreach(println) 
+
+val flatMappedValuesRDD = rdd.flatMapValues(x => 1 to x)
+flatMappedValuesRDD.collect().foreach(println) 
+
+
+val rdd = sc.parallelize(Seq((1, 2), (3, 4), (3, 6)))
+val other = sc.parallelize(Seq((3, 9)))
+
+val joinedRDD = rdd.join(other)
+joinedRDD.collect().foreach(println)
+For key 3, it joins values (4, 9) and (6, 9).
+
+val leftOuterJoinedRDD = rdd.leftOuterJoin(other)
+leftOuterJoinedRDD.collect().foreach(println)
+For key 1, there’s no matching key in other, so we get None for the right value.
+
+val cogroupedRDD = rdd.cogroup(other)
+cogroupedRDD.collect().foreach(println)
+Explanation: Key 1 exists only in rdd, so the second CompactBuffer is empty. For key 3, it groups all values from both RDDs.
+
+WordCount
+val input = sc.textFile("/home/kaizen/words.txt")
+val words = input.flatMap(x => x.split(" "))
+val result = words.map(x => (x, 1)).reduceByKey((x, y) => x + y)
+val result = words.map(x => (x, 1)).reduceByKey((x, y) => x + y)
+
+"In the expression reduceByKey((x, y) => x + y), the variables x and y represent two values from the same key group that are being combined in each step of the reduction.
+
+Here’s how it works in detail:
+
+    Initial Pairing: When reduceByKey starts processing, it takes pairs of values within each key’s group. In each call to the function (x, y) => x + y, x and y represent two of these values.
+
+    Iterative Combination: The function (x, y) => x + y is called repeatedly on pairs of values until all values for a particular key have been combined into a single result.
+        In the first call, x and y are the first two values for that key.
+        In the next call, x is the result of the previous call, and y is the next value in the group."
+
+
+
+
+
+
+
+    Initialization: Each element's value, represented by (v), is mapped to a tuple (v, 1), where v is the actual value, and 1 represents the count for averaging purposes.
+
+    Combining Values for Each Partition: The first function (acc: (Int, Int), v) => (acc._1 + v, acc._2 + 1) takes an accumulator tuple acc and a new value v. It adds v to the accumulated sum (acc._1) and increments the count (acc._2).
+
+    Combining Across Partitions: The second function (acc1: (Int, Int), acc2: (Int, Int)) => (acc1._1 + acc2._1, acc1._2 + acc2._2) merges results from different partitions by adding up both sums and counts.
+
+    Calculating the Average: The map function converts each key-value pair into the average by dividing the total sum by the count, resulting in (key, value._1 / value._2.toDouble).
+
+    Output: Finally, collectAsMap() gathers the results into a map, and map(println(_)) prints each key and its average.
+
+This code calculates the average for each key in a distributed manner using combineByKey().

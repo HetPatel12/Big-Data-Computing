@@ -1,0 +1,17 @@
+package com.pr_emp;
+
+import java.io.IOException;
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class empReducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
+  protected void reduce(Text key, Iterable<DoubleWritable> value, Reducer<Text, DoubleWritable, Text, DoubleWritable>.Context ctx) throws IOException, InterruptedException {
+    double max = 0.0D;
+    for (DoubleWritable ct : value) {
+      if (ct.get() > max)
+        max = ct.get(); 
+    } 
+    ctx.write(key, new DoubleWritable(max));
+  }
+}

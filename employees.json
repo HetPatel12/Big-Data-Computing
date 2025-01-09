@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "name": "Alice",
+    "department": "HR",
+    "salary": 5000,
+    "isPermanent": true
+  },
+  {
+    "id": 2,
+    "name": "Bob",
+    "department": "IT",
+    "salary": 6000,
+    "isPermanent": false
+  },
+  {
+    "id": 3,
+    "name": "Charlie",
+    "department": "Finance",
+    "salary": 7000,
+    "isPermanent": true
+  }
+]
+

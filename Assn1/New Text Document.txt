@@ -1,0 +1,1 @@
+ For word count problem you can create any file having some words preferably repetitive. The codes are in classroom.zip file, while using it make sure that you create your own package name.

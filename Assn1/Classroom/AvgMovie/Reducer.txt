@@ -1,0 +1,19 @@
+package com.sunbeaminfo.assign26_2;
+
+import java.io.IOException;
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class AvgMovieReducer extends Reducer<LongWritable, DoubleWritable, LongWritable, DoubleWritable> {
+  protected void reduce(LongWritable key, Iterable<DoubleWritable> value, Reducer<LongWritable, DoubleWritable, LongWritable, DoubleWritable>.Context ctx) throws IOException, InterruptedException {
+    double count = 0.0D;
+    double sum = 0.0D;
+    for (DoubleWritable rating : value) {
+      count++;
+      sum += rating.get();
+    } 
+    double avg = sum / count;
+    ctx.write(key, new DoubleWritable(avg));
+  }
+}

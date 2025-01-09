@@ -1,0 +1,36 @@
+import org.apache.spark.sql.SparkSession
+
+// Initialize SparkSession
+val spark = (SparkSession.builder()
+  .appName("Read JSON Example")
+  .master("local[*]") 
+  .getOrCreate()
+  )
+
+// Path to JSON file
+val jsonFilePath = "path/to/employees.json" 
+
+// Read the JSON file into a DataFrame
+val employeesDF = (spark.read
+  .option("multiline", "true") // Set to true for an array of JSON objects
+  .json(jsonFilePath)
+  )
+
+// Show the schema of the DataFrame
+employeesDF.printSchema()
+
+// Display the DataFrame content
+employeesDF.show()
+
+// Example Operations
+// Select specific columns
+val selectedDF = employeesDF.select("name", "department", "salary")
+selectedDF.show()
+
+// Filter employees with salary > 5000
+val highSalaryDF = employeesDF.filter("salary > 5000")
+highSalaryDF.show()
+
+// Stop the SparkSession
+spark.stop()
+

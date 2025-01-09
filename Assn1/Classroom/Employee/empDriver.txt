@@ -1,0 +1,33 @@
+package com.pr_emp;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
+public class empDriver {
+  public static void main(String[] args) {
+    try {
+      Configuration conf = new Configuration();
+      Job job = Job.getInstance(conf, "EmpJob");
+      job.setJarByClass(empDriver.class);
+      job.setMapperClass(empMapper.class);
+      job.setReducerClass(empReducer.class);
+      job.setMapOutputKeyClass(Text.class);
+      job.setMapOutputValueClass(DoubleWritable.class);
+      job.setOutputKeyClass(Text.class);
+      job.setOutputValueClass(DoubleWritable.class);
+      job.setInputFormatClass(TextInputFormat.class);
+      job.setOutputFormatClass(TextOutputFormat.class);
+      TextInputFormat.setInputPaths(job, args[0]);
+      TextOutputFormat.setOutputPath(job, new Path(args[1]));
+      job.submit();
+      boolean success = job.waitForCompletion(true);
+      int ret = success ? 0 : 1;
+      System.exit(ret);
+    } catch (Exception exception) {}
+  }
+}

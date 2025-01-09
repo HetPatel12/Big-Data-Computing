@@ -1,0 +1,19 @@
+package com.sunbeaminfo.assign26_2;
+
+import java.io.IOException;
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class AvgMovieMapper extends Mapper<LongWritable, Text, LongWritable, DoubleWritable> {
+  protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, LongWritable, DoubleWritable>.Context ctx) throws IOException, InterruptedException {
+    String line = value.toString();
+    String[] words = line.split(",");
+    if (key.get() != 0L) {
+      long movieID = Long.parseLong(words[1]);
+      double rating = Double.parseDouble(words[2]);
+      ctx.write(new LongWritable(movieID), new DoubleWritable(rating));
+    } 
+  }
+}
